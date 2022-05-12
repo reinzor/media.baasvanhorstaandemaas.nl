@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Baas van Horst aan de Maas - Stopwatch</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/theme.css" id="theme">
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">   
+                <section>
+                	<div>
+			        	<h1 id="display-area" style="color: #F00A73; font-size: 150px">00:00:00.000</h1>
+			        </div>
+                </section>
+            </div>
+        </div>
+    </body>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+        <script src="js/reveal.js"></script>
+        <script src="js/tabletop.js"></script>
+        <script src="js/handlebars.js"></script>
+        <script src="js/underscore.js"></script>
+    <script type="text/javascript">
+    	var timeBegan = null
+    , timeStopped = null
+    , stoppedDuration = 0
+    , started = null;
+
+function start() {
+    if (timeBegan === null) {
+        timeBegan = new Date();
+    }
+
+    if (timeStopped !== null) {
+        stoppedDuration += (new Date() - timeStopped);
+    }
+    console.log(stoppedDuration);
+
+    started = setInterval(clockRunning, 10);	
+}
+
+function stop() {
+    timeStopped = new Date();
+    clearInterval(started);
+}
+ 
+function reset() {
+    clearInterval(started);
+    stoppedDuration = 0;
+    timeBegan = null;
+    timeStopped = null;
+    document.getElementById("display-area").innerHTML = "00:00:00.000";
+}
+
+function clockRunning(){
+    var currentTime = new Date()
+        , timeElapsed = new Date(currentTime - timeBegan - stoppedDuration)
+        , hour = timeElapsed.getUTCHours()
+        , min = timeElapsed.getUTCMinutes()
+        , sec = timeElapsed.getUTCSeconds()
+        , ms = timeElapsed.getUTCMilliseconds();
+
+    document.getElementById("display-area").innerHTML = 
+        (hour > 9 ? hour : "0" + hour) + ":" + 
+        (min > 9 ? min : "0" + min) + ":" + 
+        (sec > 9 ? sec : "0" + sec) + "." + 
+        (ms > 99 ? ms : ms > 9 ? "0" + ms : "00" + ms);
+};
+
+start()
+
+Reveal.initialize({
+        controls: false,
+        progress: false,
+        history: false,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        autoSlide: 8000,
+        autoSlideStoppable: false,
+
+        loop: true,
+    });
+    </script>
+</html>

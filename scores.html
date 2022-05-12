@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Baas van Horst aan de Maas - All Media</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/theme.css" id="theme">
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section><img src="img/sponsors/scores/goud1.png" /></section>
+                <section id="spreadsheet_a" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_b" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/zilver1.png" /></section>
+                <section id="spreadsheet_c" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_d" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/zilver2.png" /></section>
+                <section id="spreadsheet_e" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/brons3.png" /></section>
+                <section id="spreadsheet_f" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/natura1.png" /></section>
+                <section id="spreadsheet_g" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/natura2.png" /></section>
+                <section id="spreadsheet_h" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/natura3.png" /></section>
+                <!-- <section id="spreadsheet_scores-_ranking" class="rendered-template" type="ranking-template"></section> -->
+                <section><img src="img/sponsors/scores/natura4.png" /></section>
+                <section id="spreadsheet_i" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_j" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/brons1.png" /></section>
+                <section id="spreadsheet_k" class="rendered-template" type="game-template"></section>
+                <section><img src="img/sponsors/scores/brons2.png" /></section>
+                <section id="spreadsheet_l" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_m" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_n" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_o" class="rendered-template" type="game-template"></section>
+                <section id="spreadsheet_p" class="rendered-template" type="game-template"></section>
+                <!-- <section id="spreadsheet_q" class="rendered-template" type="game-template"></section> -->
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="js/reveal.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
+        <script src="js/handlebars.js"></script>
+        <script src="js/underscore.js"></script>
+
+        <!-- Handlebars templates -->
+
+        <script id="game-template" type="text/x-handlebars-template">
+            <h3>Spel {{letter}} <small>{{name}}</small></h3>
+            {{#if ranking}}
+                <center>
+                    {{#if ranking2}}
+                    <div style="float: left; width: 50%">
+                    {{else}}
+                    <div>
+                    {{/if}}
+                        <table>
+                            <tr>
+                                <td width="70%">Team</td>
+                                <td>Score</td>
+                                <td>Punten</td>
+                            </tr>
+                            {{#each ranking1}}
+                                <tr>
+                                    <td>{{team}}</td>
+                                    <td>{{score}}</td>
+                                    <td>{{points}}</td>
+                                </tr>
+                            {{/each}}
+                        </table>
+                    </div>
+                    {{#if ranking2}}
+                    <div style="float: left; width: 50%">
+                        <table>
+                            <tr>
+                                <td width="70%">Team</td>
+                                <td>Score</td>
+                                <td>Punten</td>
+                            </tr>
+                            {{#each ranking2}}
+                                <tr>
+                                    <td>{{team}}</td>
+                                    <td>{{score}}</td>
+                                    <td>{{points}}</td>
+                                </tr>
+                            {{/each}}
+                        </table>
+                    </div>
+                    {{/if}}
+                </center>
+            {{else}}
+            <p>Nog geen rondes gespeeld</p>
+            {{/if}}
+        </script>
+
+        <script id="ranking-template" type="text/x-handlebars-template">
+            <h3>Tussenstand totaal <small>(zonder jokers)</small></h3>
+            {{#if ranking}}
+                <center>
+                    {{#if ranking2}}
+                    <div style="float: left; width: 50%">
+                    {{else}}
+                    <div>
+                    {{/if}}
+                        <table>
+                            <tr>
+                                <td width="70%">Team</td>
+                                <td>Punten</td>
+                            </tr>
+                            {{#each ranking1}}
+                                <tr>
+                                    <td>{{team}}</td>
+                                    <td>{{points}}</td>
+                                </tr>
+                            {{/each}}
+                        </table>
+                    </div>
+                    {{#if ranking2}}
+                    <div style="float: left; width: 50%">
+                        <table>
+                            <tr>
+                                <td width="70%">Team</td>
+                                <td>Punten</td>
+                            </tr>
+                            {{#each ranking2}}
+                                <tr>
+                                    <td>{{team}}</td>
+                                    <td>{{points}}</td>
+                                </tr>
+                            {{/each}}
+                        </table>
+                    </div>
+                    {{/if}}
+                </center>
+            {{else}}
+            <p>Nog geen rondes gespeeld</p>
+            {{/if}}
+        </script>
+
+        <script>
+            // Full list of configuration options available at:
+            // https://github.com/hakimel/reveal.js#configuration
+
+            $( document ).ready(function() {
+                init();
+                window.setInterval(function() {
+                    init();
+                }, 36000 * 5); // Once per 5 minutes
+            });
+
+            function init()
+            {
+                Tabletop.init( { key: "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=1Xok2JHcGgemiX3lEAoP5W9Y1ScMOvL9v_sOlxP54rF0&output=html",
+                     callback: updateInfo,
+                     simpleSheet: true } );
+            }
+
+            function makeSafeForCSS(name) {
+                return name.replace(/[^a-z0-9]/g, function(s) {
+                    var c = s.charCodeAt(0);
+                    if (c == 32) return '-';
+                    if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+                    return '__' + ('000' + c.toString(16)).slice(-4);
+                });
+            }
+
+            function updateInfo(data, tabletop) {
+                _.each(tabletop.models, function(m) {
+                    var saveName = makeSafeForCSS(m.name)
+                    console.log("Loading sheet with name " + m.name + " save name " + saveName)
+                    // Get a corresponding template
+                    var dom_element = $('#spreadsheet'+saveName+'.rendered-template');
+
+                    if ( dom_element.length == 0 )
+                        return;
+
+                    var templateData = {
+                        "ranking": []
+                    }
+
+                    var templateType = dom_element.attr("type");
+                    if (templateType == "game-template") {
+                         _.each(m.elements, function(e) {
+                            if (e["Rank"] != "" && e["Team"].toLowerCase().indexOf("opvulteam") === -1) {
+                                templateData["ranking"].push({
+                                    "rank": e["Rank"],
+                                    "team": e["Team"],
+                                    "score": e["Totale score"],
+                                    "points": e["Punten"]
+                                })
+                            }
+                        });
+                        templateData["name"] = m.elements[0][m.name]
+                        templateData["letter"] = m.name
+                    } else if (templateType == "ranking-template") {
+                        _.each(m.elements, function(e) {
+                            if (e["Rank"] != "" && e["Team naam"].toLowerCase().indexOf("opvulteam") === -1) {
+                                templateData["ranking"].push({
+                                    "rank": e["Rank"],
+                                    "team": e["Team naam"],
+                                    "points": e["Punten"]
+                                })
+                            }
+                        });
+                    }
+
+                    templateData["ranking1"] = templateData["ranking"].slice(0,13);
+                    templateData["ranking2"] = templateData["ranking"].slice(13,26);
+
+                    console.log(templateData)
+
+                    var source   = $("#" + templateType).html();
+                    var template = Handlebars.compile(source);
+                    dom_element.html(template(templateData));
+                });
+
+                Reveal.initialize({
+                    controls: false,
+                    progress: false,
+                    history: false,
+                    center: true,
+
+                    transition: 'none', // none/fade/slide/convex/concave/zoom
+
+                    autoSlide: 8000,
+                    autoSlideStoppable: false,
+
+                    loop: true,
+                });
+
+            }
+
+        </script>
+
+    </body>
+</html>

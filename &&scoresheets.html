@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Scoresheet</title>
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <!-- FA icons -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+  <!-- Custom styles for this template -->
+</head>
+
+<body>
+  <div class="container" id="app">
+    <div v-for="(round, gameLetter) in gameRoundData">
+      <div v-for="(teamNumbers, roundNumber) in round">
+        <header>
+          <h3>Spel {{gameLetter}} - {{games[gameLetter]["Spel naam"]}}</h3>
+          <h6>Ronde {{roundNumber}} - Score sheet</h6>
+          <div>
+            <table class="table" style="font-size: 10px;">
+              <tr><th style="padding: 0px">Start tijd:</th><th style="padding: 0px">Eind tijd:</th></tr>
+              <tr><td style="padding: 0px" v-text="rounds[roundNumber]['Start tijd']"></td><td style="padding: 0px" v-text="rounds[roundNumber]['Eind tijd']"></td></tr>
+            </table>
+          </div>
+        </header>
+        <div>
+          <div v-for="teamNumber in teamNumbers" style="border: 1px solid grey; padding: 5px;">
+            <h6>Team {{teamNumber}} -  {{teams[teamNumber]["Team naam"]}}</h6>
+            <table class="table">
+              <tr v-if='games[gameLetter]["Naam positieve score"] != "-"'><th>{{games[gameLetter]["Naam positieve score"]}}:</th><td></td></tr>
+              <tr v-if='games[gameLetter]["Naam negatieve score"] != "-"'><th>{{games[gameLetter]["Naam negatieve score"]}}:</th><td></td></tr>
+            </table>
+            <p>&nbsp;</p>
+            <table class="table">
+              <tr><th>Sportiviteit:</th><td style="background: right bottom no-repeat url('./img/2019.png'); background-size: contain; ">1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</td></tr>
+            </table>
+          </div>
+        </div>
+        <footer style="page-break-before: always;">
+        </footer>
+      </div>
+    </div>
+  </div>
+  <!-- /container -->
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <!-- In order to load gsheets -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js"></script>
+  <!-- Vue as vdom -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js'></script>
+  <!-- custom code -->
+  <script type="text/javascript">
+  const API_KEY = 'AIzaSyD0tUW4wertH3e-om17ud3ADntofG9asFo';
+
+  async function fetchSheet({ sheetId, sheetName }) {
+    let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${API_KEY}`;
+    const result = await fetch(url);
+    const jsonResult = await result.json();
+    return Papa.parse(Papa.unparse(jsonResult.values), { header: true }).data;
+  }
+
+  new Vue({
+    el: '#app',
+    data: {
+      sheetId: window.location.search.substr(1) || '1Xok2JHcGgemiX3lEAoP5W9Y1ScMOvL9v_sOlxP54rF0',
+      gameRoundData: {},
+      games: {},
+      teams: {},
+      rounds: {},
+    },
+    async mounted() {
+      console.log(`Feching ${this.sheetId}`)
+      const teamData = (await fetchSheet({ sheetId: this.sheetId, sheetName: 'Teams!A1:I34' })).filter((e) => e['Team nr'] !== '');
+      const rondesTeamSpelData = (await fetchSheet({ sheetId: this.sheetId, sheetName: "Rondes%20Team%2FSpel!C2:S35" }));
+      const spellenData = (await fetchSheet({ sheetId: this.sheetId, sheetName: 'Spellen!A1:J18' }));
+      const rondesData = (await fetchSheet({ sheetId: this.sheetId, sheetName: 'Rondes!A1:D22' }));
+      console.log('teamData', teamData);
+      console.log('rondesTeamSpelData', rondesTeamSpelData);
+      console.log('spellenData', spellenData);
+      console.log('rondesData', rondesData);
+      this.render(teamData, rondesTeamSpelData, spellenData, rondesData);
+    },
+    methods: {
+      getValueFromKey(arr, key) {
+        for (i in arr) {
+          if (arr[i].key == key) {
+            return arr[i].value;
+          }
+        }
+        return null;
+      },
+      render(teamData, rondesTeamSpelData, spellenData, rondesData) {
+        var gameRoundData = {}
+
+        var numTeams = teamData.length
+        var numGames = 17
+        for (var gameNumber = 0; gameNumber < numGames; ++gameNumber) {
+          var gameLetter = String.fromCharCode(65 + gameNumber); // where n is 0, 1, 2 ...
+          var gameLetterIdx;
+          if (gameNumber == 0) {
+            gameLetterIdx = "Spel letter"
+          } else {
+            gameLetterIdx = String.fromCharCode(65 + gameNumber - 1); // where n is 0, 1, 2 ...
+          }
+          gameRoundData[gameLetter] = {}
+
+          for (var teamNumber = 1; teamNumber <= numTeams; ++teamNumber)
+          {
+            if (!rondesTeamSpelData[teamNumber - 1]) {
+              continue
+            }
+            var roundNumber = rondesTeamSpelData[teamNumber - 1][gameLetterIdx]
+
+            if (roundNumber == "" || roundNumber == undefined) {
+              continue
+            }
+
+            if (!(roundNumber in gameRoundData[gameLetter])) {
+              gameRoundData[gameLetter][roundNumber] = []
+            }
+
+            gameRoundData[gameLetter][roundNumber].push(teamNumber)
+          }
+        }
+        this.gameRoundData = gameRoundData
+
+        // Games
+        for (var i = 0; i < spellenData.length; ++i)
+        {
+          this.games[spellenData[i]["Spel letter"]] = spellenData[i]
+        }
+
+        // Teams
+        for (var i = 0; i < numTeams; ++i)
+        {
+          this.teams[teamData[i]["Team nr"]] = teamData[i]
+        }
+
+        // Rounds
+        for (var i = 0; i < rondesData.length; ++i)
+        {
+          this.rounds[rondesData[i]["Ronde nummer"]] = rondesData[i]
+        }
+      }
+    }
+  })
+  </script>
+</body>
+
+</html>
