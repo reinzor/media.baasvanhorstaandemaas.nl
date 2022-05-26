@@ -102,7 +102,7 @@
         var numTeams = teamData.length
         var numGames = 17
         for (var gameNumber = 0; gameNumber < numGames; ++gameNumber) {
-          var gameLetter = String.fromCharCode(65 + gameNumber); // where n is 0, 1, 2 ...
+          var gameLetter = String.fromCharCode(65 + gameNumber - 1); // where n is 0, 1, 2 ...
           var gameLetterIdx;
           if (gameNumber == 0) {
             gameLetterIdx = "Spel letter"
